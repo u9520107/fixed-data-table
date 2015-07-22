@@ -1,5 +1,5 @@
 /**
- * FixedDataTable v0.4.1 
+ * FixedDataTable v0.4.1-meepshop 
  *
  * Copyright (c) 2015, Facebook, Inc.
  * All rights reserved.
@@ -65,23 +65,23 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1);
+	__webpack_require__(5);
+	__webpack_require__(7);
+	__webpack_require__(9);
+	__webpack_require__(11);
 	__webpack_require__(13);
 	__webpack_require__(15);
 	__webpack_require__(17);
 	__webpack_require__(19);
 	__webpack_require__(21);
 	__webpack_require__(23);
-	__webpack_require__(1);
-	__webpack_require__(5);
-	__webpack_require__(7);
-	__webpack_require__(9);
-	__webpack_require__(11);
 	module.exports = __webpack_require__(25);
 
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
@@ -90,70 +90,70 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 3 */,
 /* 4 */,
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 6 */,
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 8 */,
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 10 */,
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 12 */,
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 14 */,
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 16 */,
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 18 */,
 /* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 20 */,
 /* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ },
 /* 22 */,
 /* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
@@ -185,7 +185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Table: FixedDataTable
 	};
 
-	FixedDataTableRoot.version = '0.4.1';
+	FixedDataTableRoot.version = '0.4.1-meepshop';
 
 	module.exports = FixedDataTableRoot;
 
@@ -476,7 +476,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Whether a column is currently being resized.
 	     */
-	    isColumnResizing: PropTypes.bool
+	    isColumnResizing: PropTypes.bool,
+
+	    rowExpansionRenderer: PropTypes.func,
+
+	    rowExpansionHeightGetter: PropTypes.func
 	  },
 
 	  getDefaultProps: function getDefaultProps() /*object*/{
@@ -492,7 +496,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  getInitialState: function getInitialState() /*object*/{
 	    var props = this.props;
 	    var viewportHeight = (props.height === undefined ? props.maxHeight : props.height) - (props.headerHeight || 0) - (props.footerHeight || 0) - (props.groupHeaderHeight || 0);
-	    this._scrollHelper = new FixedDataTableScrollHelper(props.rowsCount, props.rowHeight, viewportHeight, props.rowHeightGetter);
+	    this._scrollHelper = new FixedDataTableScrollHelper(props.rowsCount, props.rowHeight, viewportHeight, props.rowHeightGetter, props.rowExpansionHeightGetter);
 	    if (props.scrollTop) {
 	      this._scrollHelper.scrollTo(props.scrollTop);
 	    }
@@ -603,7 +607,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        zIndex: 1,
 	        offsetTop: 0,
 	        scrollLeft: state.scrollX,
+	        maxScrollX: state.maxScrollX,
 	        fixedColumns: state.groupHeaderFixedColumns,
+	        rightFixedColumns: state.groupHeaderRightFixedColumns,
 	        scrollableColumns: state.groupHeaderScrollableColumns
 	      });
 	    }
@@ -674,12 +680,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        className: joinClasses(cx('fixedDataTableLayout/footer'), cx('public/fixedDataTable/footer')),
 	        data: footerData,
 	        fixedColumns: state.footFixedColumns,
+	        rightFixedColumns: state.footRightFixedColumns,
 	        height: state.footerHeight,
 	        index: -1,
 	        zIndex: 1,
 	        offsetTop: footOffsetTop,
 	        scrollableColumns: state.footScrollableColumns,
 	        scrollLeft: state.scrollX,
+	        maxScrollX: state.maxScrollX,
 	        width: state.width
 	      });
 	    }
@@ -696,8 +704,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      zIndex: 1,
 	      offsetTop: headerOffsetTop,
 	      scrollLeft: state.scrollX,
+	      maxScrollX: state.maxScrollX,
 	      fixedColumns: state.headFixedColumns,
 	      scrollableColumns: state.headScrollableColumns,
+	      rightFixedColumns: state.headRightFixedColumns,
 	      onColumnResize: this._onColumnResize
 	    });
 
@@ -749,6 +759,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      firstRowIndex: state.firstRowIndex,
 	      firstRowOffset: state.firstRowOffset,
 	      fixedColumns: state.bodyFixedColumns,
+	      rightFixedColumns: state.bodyRightFixedColumns,
 	      height: state.bodyHeight,
 	      offsetTop: offsetTop,
 	      onRowClick: state.onRowClick,
@@ -760,10 +771,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      rowsCount: state.rowsCount,
 	      rowGetter: state.rowGetter,
 	      rowHeightGetter: state.rowHeightGetter,
+	      rowExpansionHeightGetter: state.rowExpansionHeightGetter,
+	      rowExpansionRenderer: state.rowExpansionRenderer,
 	      scrollLeft: state.scrollX,
 	      scrollableColumns: state.bodyScrollableColumns,
 	      showLastRowBorder: true,
 	      width: state.width,
+	      maxScrollX: state.maxScrollX,
 	      rowPositionGetter: this._scrollHelper.getRowPosition
 	    });
 	  },
@@ -824,27 +838,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var columnInfo = {};
 	    if (canReuseColumnSettings) {
 	      columnInfo.bodyFixedColumns = oldState.bodyFixedColumns;
+	      columnInfo.bodyRightFixedColumns = oldState.bodyRightFixedColumns;
 	      columnInfo.bodyScrollableColumns = oldState.bodyScrollableColumns;
 	      columnInfo.headFixedColumns = oldState.headFixedColumns;
+	      columnInfo.headRightFixedColumns = oldState.headRightFixedColumns;
 	      columnInfo.headScrollableColumns = oldState.headScrollableColumns;
 	      columnInfo.footFixedColumns = oldState.footFixedColumns;
+	      columnInfo.footRightFixedColumns = oldState.footRightFixedColumns;
 	      columnInfo.footScrollableColumns = oldState.footScrollableColumns;
 	    } else {
 	      var bodyColumnTypes = this._splitColumnTypes(columns);
 	      columnInfo.bodyFixedColumns = bodyColumnTypes.fixed;
+	      columnInfo.bodyRightFixedColumns = bodyColumnTypes.rightFixed;
 	      columnInfo.bodyScrollableColumns = bodyColumnTypes.scrollable;
 
 	      var headColumnTypes = this._splitColumnTypes(this._createHeadColumns(columns));
 	      columnInfo.headFixedColumns = headColumnTypes.fixed;
+	      columnInfo.headRightFixedColumns = headColumnTypes.rightFixed;
 	      columnInfo.headScrollableColumns = headColumnTypes.scrollable;
 
 	      var footColumnTypes = this._splitColumnTypes(this._createFootColumns(columns));
 	      columnInfo.footFixedColumns = footColumnTypes.fixed;
+	      columnInfo.footRightFixedColumns = footColumnTypes.rightFixed;
 	      columnInfo.footScrollableColumns = footColumnTypes.scrollable;
 	    }
 
 	    if (canReuseColumnGroupSettings) {
 	      columnInfo.groupHeaderFixedColumns = oldState.groupHeaderFixedColumns;
+	      columnInfo.groupHeaderRightFixedColumns = oldState.groupHeaderRightFixedColumns;
 	      columnInfo.groupHeaderScrollableColumns = oldState.groupHeaderScrollableColumns;
 	    } else {
 	      if (columnGroups) {
@@ -852,6 +873,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        columnGroups = this._createGroupHeaderColumns(columnGroups);
 	        var groupHeaderColumnTypes = this._splitColumnTypes(columnGroups);
 	        columnInfo.groupHeaderFixedColumns = groupHeaderColumnTypes.fixed;
+	        columnInfo.groupHeaderRightFixedColumns = groupHeaderColumnTypes.rightFixed;
 	        columnInfo.groupHeaderScrollableColumns = groupHeaderColumnTypes.scrollable;
 	      }
 	    }
@@ -909,7 +931,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // Number of rows changed, try to scroll to the row from before the
 	      // change
 	      var viewportHeight = (props.height === undefined ? props.maxHeight : props.height) - (props.headerHeight || 0) - (props.footerHeight || 0) - (props.groupHeaderHeight || 0);
-	      this._scrollHelper = new FixedDataTableScrollHelper(props.rowsCount, props.rowHeight, viewportHeight, props.rowHeightGetter);
+	      this._scrollHelper = new FixedDataTableScrollHelper(props.rowsCount, props.rowHeight, viewportHeight, props.rowHeightGetter, props.rowExpansionHeightGetter);
 	      var scrollState = this._scrollHelper.scrollToRow(firstRowIndex, firstRowOffset);
 	      firstRowIndex = scrollState.index;
 	      firstRowOffset = scrollState.offset;
@@ -1113,16 +1135,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _splitColumnTypes: function _splitColumnTypes( /*array*/columns) /*object*/{
 	    var fixedColumns = [];
+	    var rightFixedColumns = [];
 	    var scrollableColumns = [];
 	    for (var i = 0; i < columns.length; ++i) {
 	      if (columns[i].props.fixed) {
-	        fixedColumns.push(columns[i]);
+	        if (columns[i].props.fixedPosition === 'right') {
+	          rightFixedColumns.push(columns[i]);
+	        } else {
+	          fixedColumns.push(columns[i]);
+	        }
 	      } else {
 	        scrollableColumns.push(columns[i]);
 	      }
 	    }
 	    return {
 	      fixed: fixedColumns,
+	      rightFixed: rightFixedColumns,
 	      scrollable: scrollableColumns
 	    };
 	  },
@@ -1411,7 +1439,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 29 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_29__;
 
@@ -1498,7 +1526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 32 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	// shim for using process in browser
 
@@ -1986,7 +2014,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 35 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright 2014-2015, Facebook, Inc.
@@ -2132,7 +2160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 38 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright 2013-2015, Facebook, Inc.
@@ -2170,7 +2198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright 2013-2015, Facebook, Inc.
@@ -2322,7 +2350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 41 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright 2013-2015, Facebook, Inc.
@@ -2367,7 +2395,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 42 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright 2013-2015, Facebook, Inc.
@@ -2519,7 +2547,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 44 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -2590,6 +2618,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    fixed: PropTypes.bool,
 
 	    /**
+	     * Controls if the column group is fixed at the left or the right of the
+	     * table.
+	     */
+	    fixedPosition: PropTypes.oneOf(['left', 'right']),
+
+	    /**
 	     * Bucket for any data to be passed into column group renderer functions.
 	     */
 	    columnGroupData: PropTypes.object,
@@ -2618,7 +2652,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  getDefaultProps: function getDefaultProps() /*object*/{
 	    return {
-	      fixed: false
+	      fixed: false,
+	      fixedPosition: 'left'
 	    };
 	  },
 
@@ -2722,6 +2757,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    fixed: PropTypes.bool,
 
 	    /**
+	     * Controls if the column group is fixed at the left or the right of the
+	     * table.
+	     */
+	    fixedPosition: PropTypes.oneOf(['left', 'right']),
+
+	    /**
 	     * The cell renderer that returns React-renderable content for table column
 	     * header.
 	     * ```
@@ -2812,7 +2853,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  getDefaultProps: function getDefaultProps() /*object*/{
 	    return {
 	      allowCellsRecycling: false,
-	      fixed: false
+	      fixed: false,
+	      fixedPosition: 'left'
 	    };
 	  },
 
@@ -2900,7 +2942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 49 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright 2013-2015, Facebook, Inc.
@@ -3058,7 +3100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 51 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -3302,7 +3344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright 2004-present Facebook. All Rights Reserved.
@@ -3650,7 +3692,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 55 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -3734,7 +3776,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 57 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -3969,7 +4011,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return UNSCROLLABLE_STATE;
 	    }
 
-	    var stateKey = '' + position + '_' + size + '_' + contentSize + '_' + orientation;
+	    var stateKey = position + '_' + size + '_' + contentSize + '_' + orientation;
 	    if (this._stateKey === stateKey) {
 	      return this._stateForKey;
 	    }
@@ -4453,7 +4495,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 61 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -4479,7 +4521,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 62 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -4521,7 +4563,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 63 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -4566,7 +4608,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 64 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -4787,7 +4829,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 68 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -4914,12 +4956,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    firstRowOffset: PropTypes.number.isRequired,
 	    fixedColumns: PropTypes.array.isRequired,
 	    height: PropTypes.number.isRequired,
+	    maxScrollX: PropTypes.number.isRequired,
 	    offsetTop: PropTypes.number.isRequired,
 	    onRowClick: PropTypes.func,
 	    onRowDoubleClick: PropTypes.func,
 	    onRowMouseDown: PropTypes.func,
 	    onRowMouseEnter: PropTypes.func,
 	    onRowMouseLeave: PropTypes.func,
+	    rightFixedColumns: PropTypes.array.isRequired,
 	    rowClassNameGetter: PropTypes.func,
 	    rowsCount: PropTypes.number.isRequired,
 	    rowGetter: PropTypes.func.isRequired,
@@ -4928,7 +4972,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    scrollLeft: PropTypes.number.isRequired,
 	    scrollableColumns: PropTypes.array.isRequired,
 	    showLastRowBorder: PropTypes.bool,
-	    width: PropTypes.number.isRequired
+	    width: PropTypes.number.isRequired,
+	    rowExpansionHeightGetter: PropTypes.func,
+	    rowExpansionRenderer: PropTypes.func
 	  },
 
 	  getInitialState: function getInitialState() /*object*/{
@@ -4989,6 +5035,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 0; i < rowsToRender.length; ++i) {
 	      var rowIndex = rowsToRender[i];
 	      var currentRowHeight = this._getRowHeight(rowIndex);
+	      var currentExpansionHeight = this._getRowExpansionHeight(rowIndex);
 	      var rowOffsetTop = rowPositionGetter(rowIndex);
 
 	      var hasBottomBorder = rowIndex === props.rowsCount - 1 && props.showLastRowBorder;
@@ -4999,10 +5046,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        data: rowGetter(rowIndex),
 	        width: props.width,
 	        height: currentRowHeight,
+	        expansionHeight: currentExpansionHeight,
 	        scrollLeft: Math.round(props.scrollLeft),
 	        offsetTop: Math.round(rowOffsetTop),
 	        fixedColumns: props.fixedColumns,
+	        rightFixedColumns: props.rightFixedColumns,
 	        scrollableColumns: props.scrollableColumns,
+	        expansionRenderer: props.rowExpansionRenderer,
+	        maxScrollX: props.maxScrollX,
 	        onClick: props.onRowClick,
 	        onDoubleClick: props.onRowDoubleClick,
 	        onMouseDown: props.onRowMouseDown,
@@ -5032,6 +5083,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  _getRowHeight: function _getRowHeight( /*number*/index) /*number*/{
 	    return this.props.rowHeightGetter ? this.props.rowHeightGetter(index) : this.props.defaultRowHeight;
+	  },
+	  _getRowExpansionHeight: function _getRowExpansionHeight( /*number*/index) /*number*/{
+	    return this.props.rowExpansionHeightGetter ? this.props.rowExpansionHeightGetter(index) : 0;
 	  }
 	});
 
@@ -5352,7 +5406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 73 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -5535,7 +5589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 74 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -5643,6 +5697,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    scrollLeft: PropTypes.number.isRequired,
 
 	    /**
+	     * The max scrollLeft value possible. Used to determine whether to show
+	     * right-fixed column shadow.
+	     */
+	    maxScrollX: PropTypes.number.isRequired,
+
+	    /**
 	     * Width of the row.
 	     */
 	    width: PropTypes.number.isRequired,
@@ -5720,6 +5780,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	      rowIndex: this.props.index
 	    });
 
+	    var rightFixedColumns;
+	    var rightColumnsShadow;
+	    if (this.props.rightFixedColumns.length > 0) {
+	      var rightFixedColumnsWidth = this._getColumnsWidth(this.props.rightFixedColumns);
+
+	      rightFixedColumns = React.createElement(FixedDataTableCellGroup, {
+	        key: 'right_fixed_cells',
+	        height: this.props.height,
+	        left: 0,
+	        offsetLeft: this.props.width - rightFixedColumnsWidth,
+	        width: rightFixedColumnsWidth,
+	        zIndex: 2,
+	        columns: this.props.rightFixedColumns,
+	        data: this.props.data,
+	        onColumnResize: this.props.onColumnResize,
+	        rowHeight: this.props.height,
+	        rowIndex: this.props.index,
+	        rightFixed: true
+	      });
+	      rightColumnsShadow = this._renderRightColumnsShadow(rightFixedColumnsWidth);
+	    }
+
 	    return React.createElement(
 	      'div',
 	      {
@@ -5734,8 +5816,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'div',
 	        { className: cx('fixedDataTableRowLayout/body') },
 	        fixedColumns,
+	        rightFixedColumns,
 	        scrollableColumns,
-	        columnsShadow
+	        columnsShadow,
+	        rightColumnsShadow
 	      )
 	    );
 	  },
@@ -5763,6 +5847,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return React.createElement('div', { className: className, style: style });
 	    }
 	  },
+	  _renderRightColumnsShadow: function _renderRightColumnsShadow( /*number*/right) /*?object*/{
+	    if (right > 0) {
+	      var className = cx({
+	        'fixedDataTableRowLayout/rightFixedColumnsDivider': true,
+	        'fixedDataTableRowLayout/columnsShadow': this.props.scrollLeft < this.props.maxScrollX,
+	        'public/fixedDataTableRow/rightFixedColumnsDivider': true,
+	        'public/fixedDataTableRow/rightColumnsShadow': this.props.scrollLeft < this.props.maxScrollX
+	      });
+	      var style = {
+	        right: -this.props.width + right,
+	        height: this.props.height
+	      };
+	      return React.createElement('div', { className: className, style: style });
+	    }
+	  },
 
 	  _onClick: function _onClick( /*object*/event) {
 	    this.props.onClick(event, this.props.index, this.props.data);
@@ -5785,6 +5884,61 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
+	var FixedDataTableRowExpansion = React.createClass({
+	  displayName: 'FixedDataTableRowExpansion',
+
+	  mixins: [ReactComponentWithPureRenderMixin],
+
+	  propTypes: {
+	    /**
+	     * Height of the row.
+	     */
+	    height: PropTypes.number.isRequired,
+
+	    /**
+	     * Height of the expansion content
+	     */
+	    expansionHeight: PropTypes.number,
+
+	    /**
+	     * Renderer for the expansion content
+	     */
+	    expansionRenderer: PropTypes.func,
+
+	    /**
+	     * The row index.
+	     */
+	    index: PropTypes.number.isRequired,
+
+	    /**
+	     * Width of the row.
+	     */
+	    width: PropTypes.number.isRequired
+
+	  },
+	  render: function render() {
+	    var style = {
+	      width: this.props.width,
+	      height: this.props.expansionHeight,
+	      top: this.props.height
+	    };
+	    var className = cx({
+	      'fixedDataTableRowLayout/expansion': true,
+	      'public/fixedDataTableRow/expansion': true
+	    });
+	    var content = this.props.expansionRenderer(this.props.index, this.props.data, this.props.width);
+
+	    return React.createElement(
+	      'div',
+	      {
+	        style: style,
+	        className: joinClasses(className, this.props.className)
+	      },
+	      content
+	    );
+	  }
+	});
+
 	var FixedDataTableRow = React.createClass({
 	  displayName: 'FixedDataTableRow',
 
@@ -5796,6 +5950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    height: PropTypes.number.isRequired,
 
+	    expansionHeight: PropTypes.number,
 	    /**
 	     * Z-index on which the row will be displayed. Used e.g. for keeping
 	     * header and footer in front of other rows.
@@ -5812,14 +5967,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    width: PropTypes.number.isRequired
 	  },
+	  defaultProps: {
+	    expansionHeight: 0
+	  },
 
 	  render: function render() /*object*/{
 	    var style = {
 	      width: this.props.width,
-	      height: this.props.height,
+	      height: this.props.height + this.props.expansionHeight,
 	      zIndex: this.props.zIndex ? this.props.zIndex : 0
 	    };
 	    translateDOMPositionXY(style, 0, this.props.offsetTop);
+	    var expansion;
+	    if (this.props.expansionHeight > 0 && this.props.expansionRenderer) {
+	      expansion = React.createElement(FixedDataTableRowExpansion, this.props);
+	    }
 
 	    return React.createElement(
 	      'div',
@@ -5829,7 +5991,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      React.createElement(FixedDataTableRowImpl, _extends({}, this.props, {
 	        offsetTop: undefined,
 	        zIndex: undefined
-	      }))
+	      })),
+	      expansion
 	    );
 	  }
 	});
@@ -5895,6 +6058,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    onColumnResize: PropTypes.func,
 
+	    rightFixed: PropTypes.bool,
+
 	    rowHeight: PropTypes.number.isRequired,
 
 	    rowIndex: PropTypes.number.isRequired,
@@ -5914,7 +6079,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var columnProps = columns[i].props;
 	      if (!columnProps.allowCellsRecycling || currentPosition - props.left <= props.width && currentPosition - props.left + columnProps.width >= 0) {
 	        var key = 'cell_' + i;
-	        cells[i] = this._renderCell(props.data, props.rowIndex, props.rowHeight, columnProps, currentPosition, key);
+	        var borderLeft = props.rightFixed && i === 0;
+	        cells[i] = this._renderCell(props.data, props.rowIndex, props.rowHeight, columnProps, currentPosition, key, borderLeft);
 	      }
 	      currentPosition += columnProps.width;
 	    }
@@ -5944,7 +6110,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*number*/height,
 	  /*object*/columnProps,
 	  /*number*/left,
-	  /*string*/key) /*object*/{
+	  /*string*/key,
+	  /*bool*/borderLeft) /*object*/{
 	    var cellRenderer = columnProps.cellRenderer || renderToString;
 	    var columnData = columnProps.columnData || EMPTY_OBJECT;
 	    var cellDataKey = columnProps.dataKey;
@@ -5990,7 +6157,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      rowData: rowData,
 	      rowIndex: rowIndex,
 	      width: columnProps.width,
-	      left: left
+	      left: left,
+	      borderLeft: borderLeft
 	    });
 	  },
 
@@ -6091,7 +6259,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -6123,6 +6291,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var ImmutableObject = (function (_ImmutableValue) {
+	  _inherits(ImmutableObject, _ImmutableValue);
+
 	  /**
 	   * @arguments {array<object>} The arguments is an array of objects that, when
 	   * merged together, will form the immutable objects.
@@ -6137,8 +6307,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      ImmutableValue.deepFreezeRootNode(this);
 	    }
 	  }
-
-	  _inherits(ImmutableObject, _ImmutableValue);
 
 	  _createClass(ImmutableObject, null, [{
 	    key: 'create',
@@ -6426,7 +6594,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 79 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -6454,7 +6622,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 80 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -6769,7 +6937,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * The left offset in pixels of the cell.
 	     */
-	    left: PropTypes.number
+	    left: PropTypes.number,
+	    /**
+	     * Controls whether or not to render left border
+	     */
+	    borderLeft: PropTypes.bool
 	  },
 
 	  getDefaultProps: function getDefaultProps() /*object*/{
@@ -6792,6 +6964,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var className = joinClasses(cx({
 	      'fixedDataTableCellLayout/main': true,
 	      'fixedDataTableCellLayout/lastChild': props.lastChild,
+	      'fixedDataTableCellLayout/borderLeft': props.borderLeft,
 	      'fixedDataTableCellLayout/alignRight': props.align === 'right',
 	      'fixedDataTableCellLayout/alignCenter': props.align === 'center',
 	      'public/fixedDataTableCell/alignRight': props.align === 'right',
@@ -6876,7 +7049,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 84 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -7121,7 +7294,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /*number*/rowCount,
 	  /*number*/defaultRowHeight,
 	  /*number*/viewportHeight,
-	  /*?function*/rowHeightGetter) {
+	  /*?function*/rowHeightGetter,
+	  /*?function*/rowExpansionHeightGetter) {
 	    _classCallCheck(this, FixedDataTableScrollHelper);
 
 	    this._rowOffsets = PrefixIntervalTree.uniform(rowCount, defaultRowHeight);
@@ -7129,6 +7303,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 0; i < rowCount; ++i) {
 	      this._storedHeights[i] = defaultRowHeight;
 	    }
+	    this._storedExpansionHeights = new Array(rowCount);
+	    for (var i = 0; i < rowCount; ++i) {
+	      this._storedExpansionHeights[i] = 0;
+	    }
+
 	    this._rowCount = rowCount;
 	    this._position = 0;
 	    this._contentHeight = rowCount * defaultRowHeight;
@@ -7136,6 +7315,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._rowHeightGetter = rowHeightGetter ? rowHeightGetter : function () {
 	      return defaultRowHeight;
 	    };
+
+	    this._rowExpansionHeightGetter = rowExpansionHeightGetter ? rowExpansionHeightGetter : function () {
+	      return 0;
+	    };
+
 	    this._viewportHeight = viewportHeight;
 	    this.scrollRowIntoView = this.scrollRowIntoView.bind(this);
 	    this.setViewportHeight = this.setViewportHeight.bind(this);
@@ -7143,6 +7327,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.scrollTo = this.scrollTo.bind(this);
 	    this.scrollToRow = this.scrollToRow.bind(this);
 	    this.setRowHeightGetter = this.setRowHeightGetter.bind(this);
+
+	    this.setRowExpansionHeightGetter = this.setRowExpansionHeightGetter.bind(this);
+
 	    this.getContentHeight = this.getContentHeight.bind(this);
 	    this.getRowPosition = this.getRowPosition.bind(this);
 
@@ -7153,6 +7340,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'setRowHeightGetter',
 	    value: function setRowHeightGetter( /*function*/rowHeightGetter) {
 	      this._rowHeightGetter = rowHeightGetter;
+	    }
+	  }, {
+	    key: 'setRowExpansionHeightGetter',
+	    value: function setRowExpansionHeightGetter( /*function*/rowExpansionHeightGetter) {
+	      this._rowExpansionHeightGetter = rowExpansionHeightGetter;
 	    }
 	  }, {
 	    key: 'setViewportHeight',
@@ -7173,7 +7365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var index = firstRowIndex;
 	      while (top <= this._viewportHeight && index < this._rowCount) {
 	        this._updateRowHeight(index);
-	        top += this._storedHeights[index];
+	        top += this._storedHeights[index] + this._storedExpansionHeights[index];
 	        index++;
 	      }
 	    }
@@ -7194,10 +7386,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return 0;
 	      }
 	      var newHeight = this._rowHeightGetter(rowIndex);
-	      if (newHeight !== this._storedHeights[rowIndex]) {
-	        var change = newHeight - this._storedHeights[rowIndex];
-	        this._rowOffsets.set(rowIndex, newHeight);
+	      var newExpansionHeight = this._rowExpansionHeightGetter(rowIndex);
+
+	      if (newHeight !== this._storedHeights[rowIndex] || newExpansionHeight !== this._storedExpansionHeights[rowIndex]) {
+	        var change = newHeight - this._storedHeights[rowIndex] + newExpansionHeight - this._storedExpansionHeights[rowIndex];
+	        this._rowOffsets.set(rowIndex, newHeight + newExpansionHeight);
 	        this._storedHeights[rowIndex] = newHeight;
+	        this._storedExpansionHeights[rowIndex] = newExpansionHeight;
 	        this._contentHeight += change;
 	        return change;
 	      }
@@ -7654,7 +7849,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 88 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
@@ -7726,7 +7921,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 89 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * Copyright (c) 2015, Facebook, Inc.
