@@ -411,6 +411,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Index of row to scroll to.
+	     * Take precedence over scrollTop.
 	     */
 	    scrollToRow: PropTypes.number,
 
@@ -497,23 +498,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var props = this.props;
 	    var viewportHeight = (props.height === undefined ? props.maxHeight : props.height) - (props.headerHeight || 0) - (props.footerHeight || 0) - (props.groupHeaderHeight || 0);
 	    this._scrollHelper = new FixedDataTableScrollHelper(props.rowsCount, props.rowHeight, viewportHeight, props.rowHeightGetter, props.rowExpansionHeightGetter);
-	    if (props.scrollTop) {
-	      this._scrollHelper.scrollTo(props.scrollTop);
-	    }
+
 	    this._didScrollStop = debounceCore(this._didScrollStop, 160, this);
+
+	    if (this.props.scrollToRow !== void 0 && this.props.scrollToRow !== null) {
+	      this._rowToScrollTo = this.props.scrollToRow;
+	    } else if (this.props.scrollTop !== void 0 && this.props.scrollTop !== null) {
+	      this._YPosToScrollTo = this.props.scrollTop;
+	    }
+	    if (this.props.scrollToColumn !== void 0 && this.props.scrollToColumn !== null) {
+	      this._columnToScrollTo = this.props.scrollToColumn;
+	    } else if (this.props.scrollLeft !== void 0 && this.props.scrollLeft !== null) {
+	      this._XPosToScrollTo = this.props.scrollLeft;
+	    }
 
 	    return this._calculateState(this.props);
 	  },
 
 	  componentWillMount: function componentWillMount() {
-	    var scrollToRow = this.props.scrollToRow;
-	    if (scrollToRow !== undefined && scrollToRow !== null) {
-	      this._rowToScrollTo = scrollToRow;
-	    }
-	    var scrollToColumn = this.props.scrollToColumn;
-	    if (scrollToColumn !== undefined && scrollToColumn !== null) {
-	      this._columnToScrollTo = scrollToColumn;
-	    }
 	    this._wheelHandler = new ReactWheelHandler(this._onWheel, this._shouldHandleWheelX, this._shouldHandleWheelY);
 	  },
 
@@ -568,12 +570,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  componentWillReceiveProps: function componentWillReceiveProps( /*object*/nextProps) {
 	    var scrollToRow = nextProps.scrollToRow;
-	    if (scrollToRow !== undefined && scrollToRow !== null) {
+	    var scrollTop = nextProps.scrollTop;
+	    if (scrollToRow !== void 0 && scrollToRow !== null && scrollToRow !== this.props.scrollToRow) {
+
 	      this._rowToScrollTo = scrollToRow;
+	    } else if (scrollTop !== void 0 && scrollTop !== null && scrollTop !== this.props.scrollTop) {
+	      this._YPosToScrollTo = scrollTop;
 	    }
+
 	    var scrollToColumn = nextProps.scrollToColumn;
-	    if (scrollToColumn !== undefined && scrollToColumn !== null) {
+	    var scrollLeft = nextProps.scrollLeft;
+	    if (scrollToColumn !== void 0 && scrollToColumn !== null && scrollToColumn !== this.props.scrollToColumn) {
+
 	      this._columnToScrollTo = scrollToColumn;
+	    } else if (scrollLeft !== void 0 && scrollLeft !== null && scrollLeft !== this.props.scrollLeft) {
+	      this._XPosToScrollTo = scrollLeft;
 	    }
 
 	    var newOverflowX = nextProps.overflowX;
@@ -902,42 +913,40 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var firstRowIndex = oldState && oldState.firstRowIndex || 0;
 	    var firstRowOffset = oldState && oldState.firstRowOffset || 0;
-	    var scrollX, scrollY;
-	    if (oldState && props.overflowX !== 'hidden') {
-	      scrollX = oldState.scrollX;
-	    } else {
-	      scrollX = props.scrollLeft;
-	    }
-	    if (oldState && props.overflowY !== 'hidden') {
-	      scrollY = oldState.scrollY;
-	    } else {
-	      scrollState = this._scrollHelper.scrollTo(props.scrollTop);
-	      firstRowIndex = scrollState.index;
-	      firstRowOffset = scrollState.offset;
-	      scrollY = scrollState.position;
-	    }
 
-	    if (this._rowToScrollTo !== undefined) {
-	      scrollState = this._scrollHelper.scrollRowIntoView(this._rowToScrollTo);
-	      firstRowIndex = scrollState.index;
-	      firstRowOffset = scrollState.offset;
-	      scrollY = scrollState.position;
-	      delete this._rowToScrollTo;
-	    }
+	    var scrollY = oldState ? oldState.scrollY : 0;
 
 	    var groupHeaderHeight = useGroupHeader ? props.groupHeaderHeight : 0;
 
-	    if (oldState && props.rowsCount !== oldState.rowsCount) {
+	    //deal with rowHeightGetter changes first
+	    var rowHeightGetterChanged = oldState && props.rowHeightGetter !== oldState.rowHeightGetter;
+	    if (rowHeightGetterChanged) {
+	      this._scrollHelper.setRowHeightGetter(props.rowHeightGetter);
+	    }
+
+	    var scrollState;
+	    if (this._rowToScrollTo !== void 0) {
+
+	      scrollState = this._scrollHelper.scrollRowIntoView(this._rowToScrollTo);
+	      delete this._rowToScrollTo;
+	    } else if (this._YPosToScrollTo) {
+
+	      scrollState = this._scrollHelper.scrollTo(this._YPosToScrollTo);
+	      delete this._YPosToScrollTo;
+	    } else if (oldState && props.rowsCount !== oldState.rowsCount) {
 	      // Number of rows changed, try to scroll to the row from before the
 	      // change
 	      var viewportHeight = (props.height === undefined ? props.maxHeight : props.height) - (props.headerHeight || 0) - (props.footerHeight || 0) - (props.groupHeaderHeight || 0);
 	      this._scrollHelper = new FixedDataTableScrollHelper(props.rowsCount, props.rowHeight, viewportHeight, props.rowHeightGetter, props.rowExpansionHeightGetter);
-	      var scrollState = this._scrollHelper.scrollToRow(firstRowIndex, firstRowOffset);
+	      scrollState = this._scrollHelper.scrollToRow(firstRowIndex, firstRowOffset);
+	    } else if (rowHeightGetterChanged) {
+	      scrollState = this._scrollHelper.scrollToRow(firstRowIndex, firstRowOffset);
+	    }
+	    if (scrollState) {
 	      firstRowIndex = scrollState.index;
 	      firstRowOffset = scrollState.offset;
 	      scrollY = scrollState.position;
-	    } else if (oldState && props.rowHeightGetter !== oldState.rowHeightGetter) {
-	      this._scrollHelper.setRowHeightGetter(props.rowHeightGetter);
+	      scrollState = null;
 	    }
 
 	    var columnResizingData;
@@ -960,7 +969,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var columnInfo = this._populateColumnsAndColumnData(columns, columnGroups, oldState);
 
-	    if (this._columnToScrollTo !== undefined) {
+	    var scrollX = oldState ? oldState.scrollX : 0;
+
+	    if (this._columnToScrollTo !== void 0) {
 	      // If selected column is a fixed column, don't scroll
 	      var fixedColumnsCount = columnInfo.bodyFixedColumns.length;
 	      if (this._columnToScrollTo >= fixedColumnsCount) {
@@ -991,6 +1002,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      }
 	      delete this._columnToScrollTo;
+	    } else if (this._XPosToScrollTo !== void 0) {
+	      scrollX = this._XPosToScrollTo;
+	      delete this._XPosToScrollTo;
 	    }
 
 	    var useMaxHeight = props.height === undefined;
