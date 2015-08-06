@@ -32,7 +32,8 @@ var FixedDataTableRowBuffer = (function () {
   /*number*/rowsCount,
   /*number*/defaultRowHeight,
   /*number*/viewportHeight,
-  /*?function*/rowHeightGetter) {
+  /*?function*/rowHeightGetter,
+  /*?function*/rowExpansionHeightGetter) {
     _classCallCheck(this, FixedDataTableRowBuffer);
 
     invariant(defaultRowHeight !== 0, 'defaultRowHeight musn\'t be equal 0 in FixedDataTableRowBuffer');
@@ -45,6 +46,7 @@ var FixedDataTableRowBuffer = (function () {
     this._bufferRowsCount = clamp(MIN_BUFFER_ROWS, Math.floor(this._maxVisibleRowCount / 2), MAX_BUFFER_ROWS);
     this._rowsCount = rowsCount;
     this._rowHeightGetter = rowHeightGetter;
+    this._rowExpansionHeightGetter = rowExpansionHeightGetter;
     this._rows = [];
     this._viewportHeight = viewportHeight;
 
@@ -83,7 +85,7 @@ var FixedDataTableRowBuffer = (function () {
       this._viewportRowsBegin = firstRowIndex;
       while (rowIndex < endIndex || totalHeight < this._viewportHeight && rowIndex < this._rowsCount) {
         this._addRowToBuffer(rowIndex, firstRowIndex, endIndex - 1);
-        totalHeight += this._rowHeightGetter(rowIndex);
+        totalHeight += this._rowHeightGetter(rowIndex) + this._rowExpansionHeightGetter(rowIndex);
         ++rowIndex;
         // Store index after the last viewport row as end, to be able to
         // distinguish when there are no rows rendered in viewport

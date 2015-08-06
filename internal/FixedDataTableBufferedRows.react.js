@@ -54,7 +54,7 @@ var FixedDataTableBufferedRows = React.createClass({
   },
 
   getInitialState: function getInitialState() /*object*/{
-    this._rowBuffer = new FixedDataTableRowBuffer(this.props.rowsCount, this.props.defaultRowHeight, this.props.height, this._getRowHeight);
+    this._rowBuffer = new FixedDataTableRowBuffer(this.props.rowsCount, this.props.defaultRowHeight, this.props.height, this._getRowHeight, this._getRowExpansionHeight);
     return {
       rowsToRender: this._rowBuffer.getRows(this.props.firstRowIndex, this.props.firstRowOffset)
     };
@@ -70,7 +70,7 @@ var FixedDataTableBufferedRows = React.createClass({
 
   componentWillReceiveProps: function componentWillReceiveProps( /*object*/nextProps) {
     if (nextProps.rowsCount !== this.props.rowsCount || nextProps.defaultRowHeight !== this.props.defaultRowHeight || nextProps.height !== this.props.height) {
-      this._rowBuffer = new FixedDataTableRowBuffer(nextProps.rowsCount, nextProps.defaultRowHeight, nextProps.height, this._getRowHeight);
+      this._rowBuffer = new FixedDataTableRowBuffer(nextProps.rowsCount, nextProps.defaultRowHeight, nextProps.height, this._getRowHeight, this._getRowExpansionHeight);
     }
     this.setState({
       rowsToRender: this._rowBuffer.getRows(nextProps.firstRowIndex, nextProps.firstRowOffset)
