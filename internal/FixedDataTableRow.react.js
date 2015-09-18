@@ -338,8 +338,10 @@ var FixedDataTableRow = React.createClass({
      */
     width: PropTypes.number.isRequired
   },
-  defaultProps: {
-    expansionHeight: 0
+  getDefaultProps: function getDefaultProps() {
+    return {
+      expansionHeight: 0
+    };
   },
 
   render: function render() /*object*/{
@@ -348,6 +350,9 @@ var FixedDataTableRow = React.createClass({
       height: this.props.height + this.props.expansionHeight,
       zIndex: this.props.zIndex ? this.props.zIndex : 0
     };
+    if (isNaN(style.height)) {
+      console.log(this.props.height, this.props.expansionHeight);
+    }
     translateDOMPositionXY(style, 0, this.props.offsetTop);
     var expansion;
     if (this.props.expansionHeight > 0 && this.props.expansionRenderer) {

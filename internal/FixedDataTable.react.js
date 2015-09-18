@@ -27,7 +27,6 @@ var FixedDataTableRow = require('./FixedDataTableRow.react');
 var FixedDataTableScrollHelper = require('./FixedDataTableScrollHelper');
 var FixedDataTableWidthHelper = require('./FixedDataTableWidthHelper');
 
-var cloneWithProps = require('./cloneWithProps');
 var cx = require('./cx');
 var debounceCore = require('./debounceCore');
 var emptyFunction = require('./emptyFunction');
@@ -787,7 +786,8 @@ var FixedDataTable = React.createClass({
           totalFixedColumnsWidth += column.props.width;
         }
 
-        var scrollableColumnIndex = this._columnToScrollTo - fixedColumnsCount;
+        var scrollableColumnIndex = Math.min(this._columnToScrollTo - fixedColumnsCount, columnInfo.bodyScrollableColumns.length - 1);
+
         var previousColumnsWidth = 0;
         for (i = 0; i < scrollableColumnIndex; ++i) {
           column = columnInfo.bodyScrollableColumns[i];
@@ -795,7 +795,7 @@ var FixedDataTable = React.createClass({
         }
 
         var availableScrollWidth = props.width - totalFixedColumnsWidth;
-        var selectedColumnWidth = columnInfo.bodyScrollableColumns[this._columnToScrollTo - fixedColumnsCount].props.width;
+        var selectedColumnWidth = columnInfo.bodyScrollableColumns[scrollableColumnIndex].props.width;
         var minAcceptableScrollPosition = previousColumnsWidth + selectedColumnWidth - availableScrollWidth;
 
         if (scrollX < minAcceptableScrollPosition) {
@@ -891,7 +891,7 @@ var FixedDataTable = React.createClass({
   _createGroupHeaderColumns: function _createGroupHeaderColumns( /*array*/columnGroups) /*array*/{
     var newColumnGroups = [];
     for (var i = 0; i < columnGroups.length; ++i) {
-      newColumnGroups[i] = cloneWithProps(columnGroups[i], {
+      newColumnGroups[i] = React.cloneElement(columnGroups[i], {
         dataKey: i,
         children: undefined,
         columnData: columnGroups[i].props.columnGroupData,
@@ -906,7 +906,7 @@ var FixedDataTable = React.createClass({
     var headColumns = [];
     for (var i = 0; i < columns.length; ++i) {
       var columnProps = columns[i].props;
-      headColumns.push(cloneWithProps(columns[i], {
+      headColumns.push(React.cloneElement(columns[i], {
         cellRenderer: columnProps.headerRenderer || renderToString,
         columnData: columnProps.columnData,
         dataKey: columnProps.dataKey,
@@ -921,7 +921,7 @@ var FixedDataTable = React.createClass({
     var footColumns = [];
     for (var i = 0; i < columns.length; ++i) {
       var columnProps = columns[i].props;
-      footColumns.push(cloneWithProps(columns[i], {
+      footColumns.push(React.cloneElement(columns[i], {
         cellRenderer: columnProps.footerRenderer || renderToString,
         columnData: columnProps.columnData,
         dataKey: columnProps.dataKey,

@@ -10,7 +10,7 @@
  * @typechecks
  */
 
-'use strict';
+"use strict";
 
 var CSS_VARS = {
   'scrollbar-face-active-color': '#7d7d7d',

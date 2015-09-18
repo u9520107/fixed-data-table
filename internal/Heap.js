@@ -13,15 +13,16 @@
 
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
 /*
  * @param {*} a
  * @param {*} b
  * @return {boolean}
  */
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
 function defaultComparator(a, b) {
   return a < b;
 }
@@ -36,21 +37,21 @@ var Heap = (function () {
     this._heapify();
   }
 
+  /*
+   * @return {boolean}
+   */
+
   _createClass(Heap, [{
     key: 'empty',
-
-    /*
-     * @return {boolean}
-     */
     value: function empty() {
       return this._size === 0;
     }
-  }, {
-    key: 'pop',
 
     /*
      * @return {*}
      */
+  }, {
+    key: 'pop',
     value: function pop() {
       if (this._size === 0) {
         return;
@@ -68,31 +69,31 @@ var Heap = (function () {
 
       return elt;
     }
-  }, {
-    key: 'push',
 
     /*
      * @param {*} item
      */
+  }, {
+    key: 'push',
     value: function push(item) {
       this._items[this._size++] = item;
       this._bubbleUp(this._size - 1);
     }
-  }, {
-    key: 'size',
 
     /*
      * @return {number}
      */
+  }, {
+    key: 'size',
     value: function size() {
       return this._size;
     }
-  }, {
-    key: 'peek',
 
     /*
      * @return {*}
      */
+  }, {
+    key: 'peek',
     value: function peek() {
       if (this._size === 0) {
         return;
@@ -107,12 +108,12 @@ var Heap = (function () {
         this._sinkDown(index);
       }
     }
-  }, {
-    key: '_bubbleUp',
 
     /*
      * @parent {number} index
      */
+  }, {
+    key: '_bubbleUp',
     value: function _bubbleUp(index) {
       var elt = this._items[index];
       while (index > 0) {
@@ -130,12 +131,12 @@ var Heap = (function () {
         index = parentIndex;
       }
     }
-  }, {
-    key: '_sinkDown',
 
     /*
      * @parent {number} index
      */
+  }, {
+    key: '_sinkDown',
     value: function _sinkDown(index) {
       var elt = this._items[index];
 

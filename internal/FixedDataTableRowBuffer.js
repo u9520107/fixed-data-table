@@ -36,7 +36,7 @@ var FixedDataTableRowBuffer = (function () {
   /*?function*/rowExpansionHeightGetter) {
     _classCallCheck(this, FixedDataTableRowBuffer);
 
-    invariant(defaultRowHeight !== 0, 'defaultRowHeight musn\'t be equal 0 in FixedDataTableRowBuffer');
+    invariant(defaultRowHeight !== 0, "defaultRowHeight musn't be equal 0 in FixedDataTableRowBuffer");
 
     this._bufferSet = new IntegerBufferSet();
     this._defaultRowHeight = defaultRowHeight;

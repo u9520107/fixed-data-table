@@ -17,7 +17,7 @@ var Locale = {
     return false;
   },
   getDirection: function getDirection() {
-    return "LTR";
+    return 'LTR';
   }
 };
 

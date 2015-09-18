@@ -1,5 +1,5 @@
 /**
- * FixedDataTable v0.4.1-meepshop 
+ * FixedDataTable v0.4.6-meepshop 
  *
  * Copyright (c) 2015, Facebook, Inc.
  * All rights reserved.
@@ -13,7 +13,7 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define(factory);
+		define([], factory);
 	else if(typeof exports === 'object')
 		exports["FixedDataTable"] = factory();
 	else

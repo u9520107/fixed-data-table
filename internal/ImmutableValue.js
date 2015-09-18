@@ -61,23 +61,21 @@ var ImmutableValue = (function () {
     invariant(secret === ImmutableValue[SECRET_KEY], 'Only certain classes should create instances of `ImmutableValue`.' + 'You probably want something like ImmutableValueObject.create.');
   }
 
+  /**
+   * Helper method for classes that make use of `ImmutableValue`.
+   * @param {ImmutableValue} destination Object to merge properties into.
+   * @param {object} propertyObjects List of objects to merge into
+   * `destination`.
+   */
+
   _createClass(ImmutableValue, null, [{
     key: 'mergeAllPropertiesInto',
-
-    /**
-     * Helper method for classes that make use of `ImmutableValue`.
-     * @param {ImmutableValue} destination Object to merge properties into.
-     * @param {object} propertyObjects List of objects to merge into
-     * `destination`.
-     */
     value: function mergeAllPropertiesInto(destination, propertyObjects) {
       var argLength = propertyObjects.length;
       for (var i = 0; i < argLength; i++) {
         _extends(destination, propertyObjects[i]);
       }
     }
-  }, {
-    key: 'deepFreezeRootNode',
 
     /**
      * Freezes the supplied object deeply. Other classes may implement their own
@@ -85,6 +83,8 @@ var ImmutableValue = (function () {
      *
      * @param {*} object The object to freeze.
      */
+  }, {
+    key: 'deepFreezeRootNode',
     value: function deepFreezeRootNode(object) {
       if (isNode(object)) {
         return; // Don't try to freeze DOM nodes.
@@ -97,8 +97,6 @@ var ImmutableValue = (function () {
       }
       Object.seal(object);
     }
-  }, {
-    key: 'recurseDeepFreeze',
 
     /**
      * Differs from `deepFreezeRootNode`, in that we first check if this is a
@@ -106,6 +104,8 @@ var ImmutableValue = (function () {
      * recursion is unnecessary as it is already frozen. That check obviously
      * wouldn't work for the root node version `deepFreezeRootNode`!
      */
+  }, {
+    key: 'recurseDeepFreeze',
     value: function recurseDeepFreeze(object) {
       if (isNode(object) || !ImmutableValue.shouldRecurseFreeze(object)) {
         return; // Don't try to freeze DOM nodes.
@@ -118,8 +118,6 @@ var ImmutableValue = (function () {
       }
       Object.seal(object);
     }
-  }, {
-    key: 'shouldRecurseFreeze',
 
     /**
      * Checks if an object should be deep frozen. Instances of `ImmutableValue`
@@ -129,6 +127,8 @@ var ImmutableValue = (function () {
      * @param {*} object The object to check.
      * @return {boolean} Whether or not deep freeze is needed.
      */
+  }, {
+    key: 'shouldRecurseFreeze',
     value: function shouldRecurseFreeze(object) {
       return typeof object === 'object' && !(object instanceof ImmutableValue) && object !== null;
     }

@@ -15,6 +15,7 @@
 var DOMMouseMoveTracker = require('./DOMMouseMoveTracker');
 var Keys = require('./Keys');
 var React = require('./React');
+var ReactDOM = require('react-dom');
 var ReactComponentWithPureRenderMixin = require('./ReactComponentWithPureRenderMixin');
 var ReactWheelHandler = require('./ReactWheelHandler');
 
@@ -276,7 +277,7 @@ var Scrollbar = React.createClass({
   _onMouseDown: function _onMouseDown( /*object*/event) {
     var nextState;
 
-    if (event.target !== React.findDOMNode(this.refs.face)) {
+    if (event.target !== this.refs.face) {
       // Both `offsetX` and `layerX` are non-standard DOM property but they are
       // magically available for browsers somehow.
       var nativeEvent = event.nativeEvent;
@@ -296,7 +297,7 @@ var Scrollbar = React.createClass({
 
     this._mouseMoveTracker.captureMouseMoves(event);
     // Focus the node so it may receive keyboard event.
-    React.findDOMNode(this).focus();
+    ReactDOM.findDOMNode(this).focus();
   },
 
   _onMouseMove: function _onMouseMove( /*number*/deltaX, /*number*/deltaY) {
@@ -404,8 +405,10 @@ var Scrollbar = React.createClass({
     if (this.isMounted()) {
       try {
         this._onBlur();
-        React.findDOMNode(this).blur();
-      } catch (oops) {}
+        ReactDOM.findDOMNode(this).blur();
+      } catch (oops) {
+        // pass
+      }
     }
   },
 
@@ -442,5 +445,3 @@ Scrollbar.KEYBOARD_SCROLL_AMOUNT = KEYBOARD_SCROLL_AMOUNT;
 Scrollbar.SIZE = parseInt(cssVar('scrollbar-size'), 10);
 
 module.exports = Scrollbar;
-
-// pass

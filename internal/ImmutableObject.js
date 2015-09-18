@@ -18,7 +18,7 @@ var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_ag
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var ImmutableValue = require('./ImmutableValue');
 
@@ -63,22 +63,20 @@ var ImmutableObject = (function (_ImmutableValue) {
     }
   }
 
+  /**
+   * DEPRECATED - prefer to instantiate with new ImmutableObject().
+   *
+   * @arguments {array<object>} The arguments is an array of objects that, when
+   * merged together, will form the immutable objects.
+   */
+
   _createClass(ImmutableObject, null, [{
     key: 'create',
-
-    /**
-     * DEPRECATED - prefer to instantiate with new ImmutableObject().
-     *
-     * @arguments {array<object>} The arguments is an array of objects that, when
-     * merged together, will form the immutable objects.
-     */
     value: function create() {
       var obj = Object.create(ImmutableObject.prototype);
       ImmutableObject.apply(obj, arguments);
       return obj;
     }
-  }, {
-    key: 'set',
 
     /**
      * Returns a new `ImmutableValue` that is identical to the supplied
@@ -90,13 +88,13 @@ var ImmutableObject = (function (_ImmutableValue) {
      * @param {?object} put Fields to merge into the object.
      * @return {ImmutableValue} The result of merging in `put` fields.
      */
+  }, {
+    key: 'set',
     value: function set(immutable, put) {
       assertImmutable(immutable);
       invariant(typeof put === 'object' && put !== undefined && !Array.isArray(put), 'Invalid ImmutableMap.set argument `put`');
       return new ImmutableObject(immutable, put);
     }
-  }, {
-    key: 'setProperty',
 
     /**
      * Sugar for `ImmutableObject.set(ImmutableObject, {fieldName: putField})`.
@@ -107,13 +105,13 @@ var ImmutableObject = (function (_ImmutableValue) {
      * @param {*} putField Value of the field to set.
      * @return {ImmutableValue} new ImmutableValue as described in `set`.
      */
+  }, {
+    key: 'setProperty',
     value: function setProperty(immutableObject, fieldName, putField) {
       var put = {};
       put[fieldName] = putField;
       return ImmutableObject.set(immutableObject, put);
     }
-  }, {
-    key: 'deleteProperty',
 
     /**
      * Returns a new immutable object with the given field name removed.
@@ -123,6 +121,8 @@ var ImmutableObject = (function (_ImmutableValue) {
      * @param {string} droppedField Name of the field to delete.
      * @return {ImmutableObject} new ImmutableObject without the key
      */
+  }, {
+    key: 'deleteProperty',
     value: function deleteProperty(immutableObject, droppedField) {
       var copy = {};
       for (var key in immutableObject) {
@@ -132,8 +132,6 @@ var ImmutableObject = (function (_ImmutableValue) {
       }
       return new ImmutableObject(copy);
     }
-  }, {
-    key: 'setDeep',
 
     /**
      * Returns a new `ImmutableValue` that is identical to the supplied object but
@@ -145,12 +143,12 @@ var ImmutableObject = (function (_ImmutableValue) {
      * @param {object} put Fields to merge into the object.
      * @return {ImmutableValue} The result of merging in `put` fields.
      */
+  }, {
+    key: 'setDeep',
     value: function setDeep(immutable, put) {
       assertImmutable(immutable);
       return _setDeep(immutable, put);
     }
-  }, {
-    key: 'values',
 
     /**
      * Retrieves an ImmutableObject's values as an array.
@@ -158,6 +156,8 @@ var ImmutableObject = (function (_ImmutableValue) {
      * @param {ImmutableValue} immutable
      * @return {array}
      */
+  }, {
+    key: 'values',
     value: function values(immutable) {
       return Object.keys(immutable).map(function (key) {
         return immutable[key];

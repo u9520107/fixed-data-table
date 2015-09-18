@@ -65,7 +65,7 @@ var IntegerBufferSet = (function () {
   }, {
     key: 'getNewPositionForValue',
     value: function getNewPositionForValue( /*number*/value) /*number*/{
-      invariant(this._valueToPositionMap[value] === undefined, 'Shouldn\'t try to find new position for value already stored in BufferSet');
+      invariant(this._valueToPositionMap[value] === undefined, "Shouldn't try to find new position for value already stored in BufferSet");
       var newPosition = this._size;
       this._size++;
       this._pushToHeaps(newPosition, value);
@@ -78,7 +78,7 @@ var IntegerBufferSet = (function () {
     /*number*/lowValue,
     /*number*/highValue,
     /*number*/newValue) /*?number*/{
-      invariant(this._valueToPositionMap[newValue] === undefined, 'Shouldn\'t try to replace values with value already stored value in ' + 'BufferSet');
+      invariant(this._valueToPositionMap[newValue] === undefined, "Shouldn't try to replace values with value already stored value in " + "BufferSet");
 
       this._cleanHeaps();
       if (this._smallValues.empty() || this._largeValues.empty()) {

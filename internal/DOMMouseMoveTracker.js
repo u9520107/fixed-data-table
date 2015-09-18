@@ -50,15 +50,15 @@ var DOMMouseMoveTracker = (function () {
     this._didMouseMove = this._didMouseMove.bind(this);
   }
 
+  /**
+   * This is to set up the listeners for listening to mouse move
+   * and mouse up signaling the movement has ended. Please note that these
+   * listeners are added at the document.body level. It takes in an event
+   * in order to grab inital state.
+   */
+
   _createClass(DOMMouseMoveTracker, [{
     key: 'captureMouseMoves',
-
-    /**
-     * This is to set up the listeners for listening to mouse move
-     * and mouse up signaling the movement has ended. Please note that these
-     * listeners are added at the document.body level. It takes in an event
-     * in order to grab inital state.
-     */
     value: function captureMouseMoves( /*object*/event) {
       if (!this._eventMoveToken && !this._eventUpToken) {
         this._eventMoveToken = EventListener.listen(this._domNode, 'mousemove', this._onMouseMove);
@@ -74,12 +74,12 @@ var DOMMouseMoveTracker = (function () {
       }
       event.preventDefault();
     }
-  }, {
-    key: 'releaseMouseMoves',
 
     /**
      * These releases all of the listeners on document.body.
      */
+  }, {
+    key: 'releaseMouseMoves',
     value: function releaseMouseMoves() {
       if (this._eventMoveToken && this._eventUpToken) {
         this._eventMoveToken.remove();
@@ -99,21 +99,21 @@ var DOMMouseMoveTracker = (function () {
         this._y = null;
       }
     }
-  }, {
-    key: 'isDragging',
 
     /**
      * Returns whether or not if the mouse movement is being tracked.
      */
+  }, {
+    key: 'isDragging',
     value: function isDragging() /*boolean*/{
       return this._isDragging;
     }
-  }, {
-    key: '_onMouseMove',
 
     /**
      * Calls onMove passed into constructor and updates internal state.
      */
+  }, {
+    key: '_onMouseMove',
     value: function _onMouseMove( /*object*/event) {
       var x = event.clientX;
       var y = event.clientY;
@@ -139,12 +139,12 @@ var DOMMouseMoveTracker = (function () {
       this._deltaX = 0;
       this._deltaY = 0;
     }
-  }, {
-    key: '_onMouseUp',
 
     /**
      * Calls onMoveEnd passed into constructor and updates internal state.
      */
+  }, {
+    key: '_onMouseUp',
     value: function _onMouseUp() {
       if (this._animationFrameID) {
         this._didMouseMove();

@@ -11,7 +11,7 @@
  */
 
 var React = require('React');
-React.initializeTouchEvents();
+//React.initializeTouchEvents();
 
 var TouchableArea = React.createClass({
   getDefaultProps() {

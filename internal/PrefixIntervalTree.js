@@ -7,7 +7,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @providesModule PrefixIntervalTree
- * @flow
+ * 
  * @typechecks
  */
 
@@ -101,12 +101,12 @@ var PrefixIntervalTree = (function () {
     value: function getSize() {
       return this._size;
     }
-  }, {
-    key: 'sumUntil',
 
     /**
      * Returns the sum get(0) + get(1) + ... + get(end - 1).
      */
+  }, {
+    key: 'sumUntil',
     value: function sumUntil(end) {
       invariant(0 <= end && end < this._size + 1, 'Index out of range %s', end);
 
@@ -124,33 +124,33 @@ var PrefixIntervalTree = (function () {
 
       return sum;
     }
-  }, {
-    key: 'sumTo',
 
     /**
      * Returns the sum get(0) + get(1) + ... + get(inclusiveEnd).
      */
+  }, {
+    key: 'sumTo',
     value: function sumTo(inclusiveEnd) {
       invariant(0 <= inclusiveEnd && inclusiveEnd < this._size, 'Index out of range %s', inclusiveEnd);
       return this.sumUntil(inclusiveEnd + 1);
     }
-  }, {
-    key: 'sum',
 
     /**
      * Returns the sum get(begin) + get(begin + 1) + ... + get(end - 1).
      */
+  }, {
+    key: 'sum',
     value: function sum(begin, end) {
       invariant(begin <= end, 'Begin must precede end');
       return this.sumUntil(end) - this.sumUntil(begin);
     }
-  }, {
-    key: 'greatestLowerBound',
 
     /**
      * Returns the smallest i such that 0 <= i <= size and sumUntil(i) <= t, or
      * -1 if no such i exists.
      */
+  }, {
+    key: 'greatestLowerBound',
     value: function greatestLowerBound(t) {
       if (t < 0) {
         return -1;
@@ -173,13 +173,13 @@ var PrefixIntervalTree = (function () {
 
       return node - this._half;
     }
-  }, {
-    key: 'greatestStrictLowerBound',
 
     /**
      * Returns the smallest i such that 0 <= i <= size and sumUntil(i) < t, or
      * -1 if no such i exists.
      */
+  }, {
+    key: 'greatestStrictLowerBound',
     value: function greatestStrictLowerBound(t) {
       if (t <= 0) {
         return -1;
@@ -202,23 +202,23 @@ var PrefixIntervalTree = (function () {
 
       return node - this._half;
     }
-  }, {
-    key: 'leastUpperBound',
 
     /**
      * Returns the smallest i such that 0 <= i <= size and t <= sumUntil(i), or
      * size + 1 if no such i exists.
      */
+  }, {
+    key: 'leastUpperBound',
     value: function leastUpperBound(t) {
       return this.greatestStrictLowerBound(t) + 1;
     }
-  }, {
-    key: 'leastStrictUpperBound',
 
     /**
      * Returns the smallest i such that 0 <= i <= size and t < sumUntil(i), or
      * size + 1 if no such i exists.
      */
+  }, {
+    key: 'leastStrictUpperBound',
     value: function leastStrictUpperBound(t) {
       return this.greatestLowerBound(t) + 1;
     }

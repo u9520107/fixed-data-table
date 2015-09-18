@@ -278,21 +278,19 @@ var FixedDataTableScrollHelper = (function () {
         contentHeight: this._contentHeight
       };
     }
-  }, {
-    key: 'scrollToRow',
 
     /**
      * Allows to scroll to selected row with specified offset. It always
      * brings that row to top of viewport with that offset
      */
+  }, {
+    key: 'scrollToRow',
     value: function scrollToRow( /*number*/rowIndex, /*number*/offset) /*object*/{
       rowIndex = clamp(0, rowIndex, Math.max(this._rowCount - 1, 0));
       offset = clamp(-this._storedHeights[rowIndex], offset, 0);
       var firstRow = this._rowOffsets.sumUntil(rowIndex);
       return this.scrollTo(firstRow - offset);
     }
-  }, {
-    key: 'scrollRowIntoView',
 
     /**
      * Allows to scroll to selected row by bringing it to viewport with minimal
@@ -302,6 +300,8 @@ var FixedDataTableScrollHelper = (function () {
      * below end of viewport, it will be scrolled up to be fully visible on the
      * bottom of viewport.
      */
+  }, {
+    key: 'scrollRowIntoView',
     value: function scrollRowIntoView( /*number*/rowIndex) /*object*/{
       rowIndex = clamp(0, rowIndex, Math.max(this._rowCount - 1, 0));
       var rowBegin = this._rowOffsets.sumUntil(rowIndex);
