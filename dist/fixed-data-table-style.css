@@ -1,5 +1,5 @@
 /**
- * FixedDataTable v0.4.6-meepshop 
+ * FixedDataTable v0.4.7-meepshop 
  *
  * Copyright (c) 2015, Facebook, Inc.
  * All rights reserved.

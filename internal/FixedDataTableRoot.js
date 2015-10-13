@@ -21,6 +21,6 @@ var FixedDataTableRoot = {
   Table: FixedDataTable
 };
 
-FixedDataTableRoot.version = '0.4.6-meepshop';
+FixedDataTableRoot.version = '0.4.7-meepshop';
 
 module.exports = FixedDataTableRoot;
